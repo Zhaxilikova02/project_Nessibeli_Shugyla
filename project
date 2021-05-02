@@ -1,0 +1,145 @@
+#Заходим в наш гуглдрайв
+from google.colab import drive
+drive.mount("/content/drive/",force_remount=True)
+
+
+import requests 
+from bs4 import BeautifulSoup
+
+#Указываем путь к нашей папке
+path = r"/content/drive/My Drive/CSS/"
+
+#с помощью try,except перерабатываем данные
+with open(path + 'result.csv', 'w', encoding='utf-8') as file:
+  file.write("Названия,Цена,Ссылка на товар,Рейтинг,Код товара\n")#Пишем названия данных
+
+def get_data(pages):  
+  result = ''
+  numb = 0
+  for i in range(1, pages+1):
+    url = f'https://www.sulpak.kz/f/smartfoniy?page={i}'
+    r = requests.get(url = url).text
+    soup = BeautifulSoup(r, 'lxml')
+
+    links = soup.find_all('div', class_='product-container-right-side')
+    for link in links:
+      url = f'https://www.sulpak.kz{link.find("a").get("href")}'
+      r = requests.get(url = url).text
+      soup = BeautifulSoup(r, 'lxml')
+
+      title = soup.find('h1', class_='product-container-title').text
+      price = soup.find('div', class_='current-price').text
+      link = url  
+      score = soup.find('div', {'id':'write-new-comment'}).previous_sibling.previous_sibling.get('data-score')
+      code = soup.find('div', class_='product-code-container').find('span').text
+      
+      result += f'{title},{price},{link},{score},{code}\n'
+      numb += 1 
+      print(f'Парсим карту - {numb}')
+
+  return result
+
+def save_data():
+  pages = int(input('Enter the number of pages for scrapping: '))
+  result = get_data(pages)
+  print('Парсинг завершён.')
+  with open(path +'result.csv', 'a', encoding='utf-8') as file:
+    file.write(result)
+  exit()
+
+if __name__ == "__main__": #Запускаем код.
+    save_data()
+    
+    
+    import requests 
+from bs4 import BeautifulSoup
+
+
+try:
+  with open(path+'result.csv', 'w', encoding='utf-8') as file:
+    file.write("Названия,Цена,Ссылка на товар,Рейтинг,Код_товара\n")
+
+  def get_data(pages):  
+    result = ''
+    numb = 0
+    for i in range(1, pages+1):
+      url = f'https://www.sulpak.kz/f/smartfoniy?page={i}'
+    
+      r = requests.get(url = url).text
+    
+      soup = BeautifulSoup(r, 'lxml')
+
+      links = soup.find_all('div', class_='product-container-right-side')
+      for link in links:  
+        url = f'https://www.sulpak.kz{link.find("a").get("href")}'
+        r = requests.get(url = url).text
+        soup = BeautifulSoup(r, 'lxml')
+
+        title = soup.find('h3', class_='product-container-title').text
+        price = soup.find('div', class_='current-price').text
+        link = url  
+        score = soup.find('div', {'id':'write-new-comment'}).previous_sibling.previous_sibling.get('data-score')
+        code = soup.find('div', class_='product-code-container').find('span').text
+        
+        result += f'{title},{price},{link},{score},{code}\n'
+        numb += 1 
+        print(f'Parsing the map - {numb}')
+
+    return result
+
+  def save_data():
+    pages = int(input('Enter the number of pages for scrapping: '))
+    result = get_data(pages)
+    print('Parsing completed.')
+    with open(path+'result.csv', 'a', encoding='utf-8') as file:
+      file.write(result)
+    exit()
+
+  if __name__ == "__main__":  
+      save_data()
+except:
+  pass
+  
+  import pandas as pd
+
+
+path = r"/content/drive/My Drive/CSS/"
+
+df = pd.read_csv("https://raw.githubusercontent.com/AizereA/csv.file/main/FILE")
+
+df.head(6) 
+
+df2 = df.head(31)
+df2.columns
+
+df.info()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os 
+
+%matplotlib inline
+figure = plt.figure(figsize=(10,15))   
+#Using isin (), we took data from the variable A
+A = df.Цена.value_counts().sort_values(ascending = True).index.values
+sns.barplot(y="Названия", x="Рейтинг",data=df[df.Цена.isin(A)]);
+figure.savefig("Diagram1.png")
+
+import numpy as np
+%matplotlib inline
+figure = plt.figure(figsize=(5,4))
+Diagramm = pd.DataFrame({'Цена': np.random.uniform(size=1000)})
+#1000 points in dataframe('Price')
+Diagramm['Цена'].plot(style='.');
+
+figure.savefig('Diagram3.png')
+
+#Тут мы не работаем с данными df
+vals = [5, 15, 30, 30, 20]
+#А просто демонстрируем знания о плоте sublots
+labels = ["Nokia", "Oppo", "Apple", "Samsung", "Hwawei"]
+fig, ax = plt.subplots()
+ax.pie(vals, labels=labels)
+ax.axis("equal")
+ax.set_title('Phones',fontsize=20);
+fig.savefig('Diagram4.png')
